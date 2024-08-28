@@ -32,7 +32,7 @@ static_resources:
                   name: local_route
                   virtual_hosts:
                     - name: local_service
-                      domains: [ "*" ]
+                      domains: ["*"]
                       routes:
                         - match:
                             prefix: "/"
@@ -57,11 +57,12 @@ static_resources:
                             value: |
                               {
                                 "provider": {
-                                  "type": "moonshot",
+                                  "type": "coze",
                                   "domain": "api.moonshot.cn",
+                                  "cozeApiDomain": "api.coze.com",
+                                  "cozeBotId": "7407743452303851525",
                                   "apiTokens": [
-                                    "****",
-                                    "****"
+                                    "pat_7n1OmGNUxVofj65fqh3lk3r9WpYtFNsdQBcOJmfg841PU2VqpRO6hyvdU1rAJ7sv"
                                   ],
                                   "timeout": 1200000,
                                   "modelMapping": {
@@ -69,7 +70,7 @@ static_resources:
                                     "gpt-35-turbo": "moonshot-v1-32k",
                                     "gpt-4-turbo": "moonshot-v1-128k",
                                     "*": "moonshot-v1-8k"
-                                  },
+                                  }
                                 }
                               }
                   - name: envoy.filters.http.router

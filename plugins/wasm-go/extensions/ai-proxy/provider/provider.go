@@ -37,6 +37,7 @@ const (
 	providerTypeSpark      = "spark"
 	providerTypeGemini     = "gemini"
 	providerTypeDeepl      = "deepl"
+	providerTypeCoze       = "coze"
 
 	protocolOpenAI   = "openai"
 	protocolOriginal = "original"
@@ -92,6 +93,7 @@ var (
 		providerTypeSpark:      &sparkProviderInitializer{},
 		providerTypeGemini:     &geminiProviderInitializer{},
 		providerTypeDeepl:      &deeplProviderInitializer{},
+		providerTypeCoze:       &cozeProviderInitializer{},
 	}
 )
 
@@ -189,6 +191,12 @@ type ProviderConfig struct {
 	// @Title zh-CN 自定义大模型参数配置
 	// @Description zh-CN 用于填充或者覆盖大模型调用时的参数
 	customSettings []CustomSetting
+	// @Title zh-CN Coze API Domain
+	// @Description zh-CN 仅适用于 Coze AI 服务。参考：https://www.coze.cn/open
+	cozeApiDomain string `required:"true" yaml:"cozeApiDomain" json:"cozeApiDomain"`
+	// @Title zh-CN Coze Bot Id
+	// @Description zh-CN 进入 Bot 的 开发页面，开发页面 URL 中 bot 参数后的数字就是 Bot ID。例如https://www.coze.cn/space/341****/bot/73428668*****，bot ID 为73428668*****。
+	cozeBotId string `required:"true" yaml:"cozeBotId" json:"cozeBotId"`
 }
 
 func (c *ProviderConfig) FromJson(json gjson.Result) {
@@ -230,6 +238,8 @@ func (c *ProviderConfig) FromJson(json gjson.Result) {
 	c.hunyuanAuthKey = json.Get("hunyuanAuthKey").String()
 	c.minimaxGroupId = json.Get("minimaxGroupId").String()
 	c.cloudflareAccountId = json.Get("cloudflareAccountId").String()
+	c.cozeApiDomain = json.Get("cozeApiDomain").String()
+	c.cozeBotId = json.Get("cozeBotId").String()
 	if c.typ == providerTypeGemini {
 		c.geminiSafetySetting = make(map[string]string)
 		for k, v := range json.Get("geminiSafetySetting").Map() {
@@ -265,9 +275,6 @@ func (c *ProviderConfig) FromJson(json gjson.Result) {
 }
 
 func (c *ProviderConfig) Validate() error {
-	if c.timeout < 0 {
-		return errors.New("invalid timeout in config")
-	}
 	if c.protocol != protocolOpenAI && c.protocol != protocolOriginal {
 		return errors.New("invalid protocol in config")
 	}
